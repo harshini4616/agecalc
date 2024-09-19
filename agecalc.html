@@ -1,0 +1,193 @@
+ <!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=, initial-scale=1.0'>
+    <title>Age Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #0a6cf1;
+        }
+
+        .container {
+            width: 40%;
+            min-width: 450px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 50px 30px;
+        }
+
+        .container * {
+            outline: none;
+            border: none;
+        }
+
+        .container .inputs-wrapper {
+            background-color: #fff;
+            padding: 30px 25px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 50px;
+        }
+
+        .inputs-wrapper input,
+        .inputs-wrapper button {
+            background: #0a6cf1;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: 500;
+            height: 50px;
+        }
+
+        .inputs-wrapper input {
+            width: 60%;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .inputs-wrapper button {
+            width: 30%;
+            float: right;
+            padding: 0 20px;
+            cursor: pointer;
+        }
+
+        .output {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .output div {
+            width: 100px;
+            height: 100px;
+            color: #0a6cf1;
+            background: #fff;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            padding: 20px 0;
+        }
+
+        .output div span {
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        .output div p {
+            font-size: 14px;
+            color: #707070;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="inputs-wrapper">
+            <input type="date" name="date" id="date-input">
+            <button onclick="ageCalculate()">Calculate</button>
+        </div>
+        <div class="output">
+            <div>
+                <span id="year">-</span>
+                <p>Year</p>
+            </div>
+            <div>
+                <span id="month">-</span>
+                <p>Month</p>
+            </div>
+            <div>
+                <span id="day">-</span>
+                <p>Day</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        function ageCalculate() {
+            let today = new Date();
+            let inputDate = new Date(document.getElementById('date-input').value);
+            let birthYear, birthMonth, birthDay;
+            let birthDetails = {
+                year: inputDate.getFullYear(),
+                month: inputDate.getMonth() + 1,
+                date: inputDate.getDate(),
+            }
+
+            let currentYear = today.getFullYear();
+            let currentMonth = today.getMonth() + 1;
+            let currentDate = today.getDate();
+
+            leapChecker(currentYear);
+
+            if (birthDetails.year > currentYear ||
+                (birthDetails.month > currentMonth && birthDetails.year == currentYear) ||
+                (birthDetails.date > currentDate && birthDetails.month == currentMonth && birthDetails.year == currentYear)) {
+                alert('Not Born yet');
+                displayResult("-", "-", "-");
+                return;
+            }
+
+            birthYear = currentYear - birthDetails.year;
+
+            if (currentMonth >= birthDetails.month) {
+                birthMonth = currentMonth - birthDetails.month;
+            } else {
+                birthYear--;
+                birthMonth = 12 + currentMonth - birthDetails.month;
+            }
+
+
+            if (currentDate >= birthDetails.date) {
+                birthDay = currentDate - birthDetails.date;
+            } else {
+                birthMonth--;
+                let Day = months[currentMonth - 2];
+                birthDay = Day + currentDate - birthDetails.date;
+                if (birthMonth < 0) {
+                    birthMonth = 11;
+                    birthYear--;
+                }
+            }
+
+            displayResult(birthYear, birthMonth, birthDay);
+
+
+            function displayResult(bYear, bMonth, bDay) {
+                document.getElementById('year').textContent = bYear;
+                document.getElementById('month').textContent = bMonth;
+                document.getElementById('day').textContent = bDay;
+            }
+
+        }
+        function leapChecker(year) {
+            if (year % 4 == 0 || (year % 100 == 0 && year % 400 == 0)) {
+                months[1] = 29;
+            } else {
+                months[1] = 28;
+            }
+        }
+    </script>
+</body>
+
+</html>
